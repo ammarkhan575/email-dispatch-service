@@ -6,6 +6,11 @@ import (
 )
 
 func loadReciepients(filePath string, reciepients chan Reciepient) []Reciepient {
+	// Close the channel after loading all reciepients, 
+	// otherwise consumer will wait indefinitely for more reciepients to be sent to the channel. 
+	// and this will cause deadlock.
+	defer close(reciepients)
+	
 	// This function would contain logic to read a file and parse the reciepients
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -24,5 +29,6 @@ func loadReciepients(filePath string, reciepients chan Reciepient) []Reciepient 
 		// fmt.Printf("Loaded reciepient: %s <%s>\n", record[0], record[1])
 		// recipients = append(recipients, Reciepient{Name: record[0], Email: record[1]})
 	}
+	
 	return recipients
 }
