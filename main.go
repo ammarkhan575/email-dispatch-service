@@ -1,6 +1,10 @@
 package main
 
-import "sync"
+import (
+	"bytes"
+	"html/template"
+	"sync"
+)
 
 type Reciepient struct {
 	Name  string
@@ -24,4 +28,19 @@ func main() {
 		go emailWorker(i, recipientChan, &wg)
 	}
 	wg.Wait()
+}
+
+func executeEmailTemplate(recipient Reciepient) (string, error) {
+	// This function will execute the email template with the recipient's data and send the email.
+	// For simplicity, we will just print the email content to the console.
+	tmpl, err := template.ParseFiles("email.tmpl")
+	if err != nil {
+		return "", err
+	}
+	var tpl bytes.Buffer
+	err = tmpl.Execute(&tpl, recipient)
+	if err != nil {
+		return "", err
+	}
+	return tpl.String(), nil
 }
